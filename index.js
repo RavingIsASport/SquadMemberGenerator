@@ -5,6 +5,7 @@ const Employee = require("./lib/Employee");
 const Manager = require("./lib/Manager");
 const Engineer = require("./lib/Engineer");
 const Intern = require("./lib/Intern");
+const { resolve } = require("path");
 
 function mainHTMl() {
     const htmlPage = `<!DOCTYPE html>
@@ -29,10 +30,7 @@ function mainHTMl() {
         </div>
     </section>
     <br>
-
-</body>
-
-</html>`;
+        `;
     fs.writeFile('index.html', htmlPage, function (err) {
         if (err) {
             return reject(err);
@@ -41,9 +39,8 @@ function mainHTMl() {
 }
 
 
-const squadMember = [];
-
 function getInfo() {
+    const squadMember = [];
     inquirer
         .prompt([
             {
@@ -55,6 +52,8 @@ function getInfo() {
         ])
         .then((response) => {
             if (response.role === "Manager") {
+                newMember = new Manager(response);
+                squadMember.push(newMember);
                 inquirer
                     .prompt([{
                         type: "input",
@@ -73,132 +72,151 @@ function getInfo() {
                     },
                     {
                         type: 'input',
-                        name: 'officeNumber',
+                        name: 'office',
                         message: `What is the manager's office number?`,
                     }])
-                    .then(({name, role, id, email, officeNumber}) => {
-                        newMember = new Manager(name, role, id, email, officeNumber);
-                        squadMember.push(newMember);
-                        mainHTMl(newMember)
-                    });
-            } else if (response.role === 'Engineer') {
-                inquirer
-                    .prompt([{
+                    .then((response) => {
+                        let memberData = `<div class="tile is-ancestor">
+                            <div class="tile is-parent is-vertical">
+                                <article class="tile is-child is-3 notification theTile">
+                                    <h1 class="title is-2">${response.name}</p>
+                                        <h2 class="subtitle is-3">Manager</p>
+                                            <p class="subtitle is-4">ID:${response.id}</p>
+                                            <p class="subtitle is-4">Email:${response.email}</p>
+                                            <p class="subtitle is-4">Ofiice Number:${response.office}</p>
+                                </article>
+                    
+                            </div>
+                        </div>`
+                        console.log(memberData);
+                        fs.appendFile("index.html", memberData, (err) => {
+                            if (err) {
+                                console.log('Error')
+                            } else {
+                                console.log('Success')
+                            }
 
-                        type: "input",
-                        name: "name",
-                        message: "What is your name?",
-                    },
-                    {
-                        type: "input",
-                        name: "id",
-                        message: "What is your ID?",
-                    },
-                    {
-                        type: "input",
-                        name: "email",
-                        message: "What is your email?",
-                    },
-                    {
-                        type: 'input',
-                        name: 'gitHub',
-                        message: `What is your Github username?`,
-                    }])
-                    .then(({name, role, id, email, gitHub}) => {
-                        newMember = new Manager(name, role, id, email, gitHub);
-                        squadMember.push(newMember);
-                        mainHTMl(newMember)
-                        console.log(newMember)
+                        });
+                    })
+            } else if (response.role === 'Engineer') {
+                newMember = new Engineer(answers);
+                squadMember.push(newMember);
+                inquirer
+                    .prompt([
+                        {
+                            type: 'input',
+                            name: 'gitHub',
+                            message: `What is your Github username?`,
+                        },
+                        {
+                            type: "input",
+                            name: "name",
+                            message: "What is your name?",
+                        },
+                        {
+                            type: "input",
+                            name: "id",
+                            message: "What is your ID?",
+                        },
+                        {
+                            type: "input",
+                            name: "email",
+                            message: "What is your email?",
+                        },
+                    ])
+                    .then((answers) => {
+                        let memberData = `<div class="tile is-ancestor">
+                            <div class="tile is-parent is-vertical">
+                                <article class="tile is-child is-3 notification theTile">
+                                    <h1 class="title is-2">${answers.name}</p>
+                                        <h2 class="subtitle is-3">Engineer</p>
+                                            <p class="subtitle is-4">ID:${answers.id}</p>
+                                            <p class="subtitle is-4">Email:${answers.email}</p>
+                                            <p class="subtitle is-4">Github:${answers.gitHub}</p>
+                                </article>
+                    
+                            </div>
+                        </div>`
+                        console.log(memberData);
+                        fs.appendFile("index.html", memberData, (err) => {
+                            if (err) {
+                                console.log('Error')
+                            } else {
+                                console.log('Success')
+                            }
+
+                        })
+
                     });
 
             } else if (response.role === 'Intern') {
                 inquirer
-                    .prompt([{
-
-                        type: "input",
-                        name: "name",
-                        message: "What is your name?",
-                    },
-                    {
-                        type: "input",
-                        name: "id",
-                        message: "What is your ID?",
-                    },
-                    {
-                        type: "input",
-                        name: "email",
-                        message: "What is your email?",
-                    },
-                    {
-                        type: 'input',
-                        name: 'school',
-                        message: `What school did you attend?`,
-                    }])
+                    .prompt([
+                        {
+                            type: "input",
+                            name: "name",
+                            message: "What is your name?",
+                        },
+                        {
+                            type: "input",
+                            name: "id",
+                            message: "What is your ID?",
+                        },
+                        {
+                            type: "input",
+                            name: "email",
+                            message: "What is your email?",
+                        },
+                        {
+                            type: 'input',
+                            name: 'school',
+                            message: `What school did you attend?`,
+                        }])
                     .then((answers) => {
-                        newMember = new Manager(answers);
+                        newMember = new Intern(answers);
                         squadMember.push(newMember);
-                    });;
-            }
-        })
+                        let memberData = `<div class="tile is-ancestor">
+                            <div class="tile is-parent is-vertical">
+                                <article class="tile is-child is-3 notification theTile">
+                                    <h1 class="title is-2">${answers.name}</p>
+                                        <h2 class="subtitle is-3">Engineer</p>
+                                            <p class="subtitle is-4">ID:${answers.id}</p>
+                                            <p class="subtitle is-4">Email:${answers.email}</p>
+                                            <p class="subtitle is-4">School:${answers.school}</p>
+                                </article>
+                    
+                            </div>
+                        </div>`
+                        console.log(memberData);
+                        fs.appendFile("index.html", memberData, (err) => {
+                            if (err) {
+                                console.log('Error')
+                            } else {
+                                console.log('Success')
+                            }
 
-};
-function memberDiv(member) {
-    return new Promise(function (resolve, reject) {
-        let memberData = "";
-        if (getInfo === "Manager") {
-            const officeNumber = Manager.getOfficeNumber();
-            memberData = `<div class="tile is-ancestor">
-            <div class="tile is-parent is-vertical">
-                <article class="tile is-child is-3 notification theTile">
-                    <h1 class="title is-2">${Employee.getName}</p>
-                        <h2 class="subtitle is-3">${Manager.getRole}</p>
-                            <p class="subtitle is-4">ID:${Employee.getId}</p>
-                            <p class="subtitle is-4">Email:${Employee.getEmail}</p>
-                            <p class="subtitle is-4">Ofiice Number:${Manager.getOfficeNumber}</p>
-                </article>
-    
-            </div>
-        </div>`;
-        } else if (getInfo === "Engineer") {
-            const gitHub = Engineer.getGithub();
-            memberData = `<div class="tile is-ancestor">
-             <div class="tile is-parent is-vertical">
-                 <article class="tile is-child is-3 notification theTile">
-                     <h1 class="title is-2">${Employee.getName}</p>
-                         <h2 class="subtitle is-3">${Engineer.getRole}</p>
-                             <p class="subtitle is-4">ID:${Employee.getId}</p>
-                             <p class="subtitle is-4">Email:${Employee.getEmail}</p>
-                             <p class="subtitle is-4">Github:${Engineer.getGithub}</p>
-                 </article>
-     
-             </div>
-         </div>>`;
-        } else if (getInfo === "Intern") {
-            const school = Intern.getSchool();
-            memberData = `<div class="tile is-ancestor">
-            <div class="tile is-parent is-vertical">
-                <article class="tile is-child is-3 notification theTile">
-                    <h1 class="title is-2">${Employee.getName}</p>
-                        <h2 class="subtitle is-3">${Intern.getRole}</p>
-                            <p class="subtitle is-4">ID:${Employee.getId}</p>
-                            <p class="subtitle is-4">Email:${Employee.getEmail}</p>
-                            <p class="subtitle is-4">School:${Intern.getSchool}</p>
-                </article>
-    
-            </div>
-        </div>`
-        }
-        fs.appendFile(`index.html`, memberData, function (err) {
-            if (err) {
-                return reject(err);
-            };
-            return resolve();
+                        })
+
+                    });
+            }
         });
+};
+async function endHTML() {
+    const endHtmlPage = `</body>
+
+    </html>`;
+    fs.appendFile("index.html", endHtmlPage, (err) => {
+        if (err) {
+            console.log('Error')
+        } else {
+            console.log('Success')
+        }
+
     });
 }
 function startApp() {
-    getInfo();
     mainHTMl();
-    memberDiv();
+    getInfo();
+    endHTML()
 }
 startApp();
