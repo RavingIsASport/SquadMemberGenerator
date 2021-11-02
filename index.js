@@ -99,7 +99,7 @@ function getInfo() {
                         });
                     })
             } else if (response.role === 'Engineer') {
-                newMember = new Engineer(answers);
+                newMember = new Engineer(response);
                 squadMember.push(newMember);
                 inquirer
                     .prompt([
@@ -179,7 +179,7 @@ function getInfo() {
                             <div class="tile is-parent is-vertical">
                                 <article class="tile is-child is-3 notification theTile">
                                     <h1 class="title is-2">${answers.name}</p>
-                                        <h2 class="subtitle is-3">Engineer</p>
+                                        <h2 class="subtitle is-3">Intern</p>
                                             <p class="subtitle is-4">ID:${answers.id}</p>
                                             <p class="subtitle is-4">Email:${answers.email}</p>
                                             <p class="subtitle is-4">School:${answers.school}</p>
